@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reviews   Review[]
+  favorites Favorite[]
+}
+
+model Institution {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        InstitutionType
+  address     String?
+  city        String?
+  state       String?
+  country     String?
+  website     String?
+  phone       String?
+  email       String?
+  foundedYear Int?
+  accreditation String?
+  imageUrl    String?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  courses  Course[]
+  reviews  Review[]
+  favorites Favorite[]
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  level         EducationLevel
+  duration      String?  // e.g., "4 years", "2 years"
+  format        CourseFormat
+  tuitionFee    Float?   // Annual tuition fee
+  currency      String?  // e.g., "USD", "EUR"
+  requirements  String?
+  imageUrl      String?
+  rating        Float    @default(0)
+  reviewCount   Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  reviews       Review[]
+  favorites     Favorite[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5 rating
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId  String?
+  institution    Institution? @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  courseId       String?
+  course         Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId  String?
+  institution    Institution? @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  courseId       String?
+  course         Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, institutionId])
+  @@unique([userId, courseId])
+}
+
+enum InstitutionType {
+  UNIVERSITY
+  COLLEGE
+  COMMUNITY_COLLEGE
+  INSTITUTE
+  VOCATIONAL_SCHOOL
+  ONLINE_INSTITUTION
+}
+
+enum EducationLevel {
+  UNDERGRADUATE
+  GRADUATE
+  DOCTORAL
+  POSTGRADUATE
+  CERTIFICATE
+  DIPLOMA
+}
+
+enum CourseFormat {
+  ON_CAMPUS
+  ONLINE
+  HYBRID
+  PART_TIME
+  FULL_TIME
+}
