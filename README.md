@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 Welcome to Z.ai Code Scaffold
 
 A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
@@ -139,3 +140,6 @@ This scaffold includes a comprehensive set of modern web development tools:
 ---
 
 Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+=======
+# Education-Finder-App
+>>>>>>> 288d83ae196f713efd7a633758f328c0123b2a0e
